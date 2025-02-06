@@ -7,6 +7,14 @@ require('dotenv').config();
 // Initialize Express app
 const app = express();
 
+const corsOptions = {
+    origin: 'http://localhost:5173', // Allow frontend access
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: 'Content-Type,Authorization',
+};
+
+app.use(cors(corsOptions));
+
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());

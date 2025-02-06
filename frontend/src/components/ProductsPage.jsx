@@ -31,8 +31,8 @@ const ProductsPage = () => {
     // Fetching products from MongoDB
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('/api/products', {
-          params: {
+        const response = await axios.get('http://localhost:5000/api/products', {
+            params: {
             minPrice: priceRange[0],
             maxPrice: priceRange[1],
             query: searchQuery,
