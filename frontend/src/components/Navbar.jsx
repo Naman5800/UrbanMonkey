@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+<<<<<<< HEAD
 import logo from '../assets/logo.png'
+=======
+>>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -11,7 +14,11 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex items-center">
           <img 
+<<<<<<< HEAD
             src={logo} 
+=======
+            src="https://www.urbanmonkey.com/cdn/shop/files/grind-mtv-x-urban-monkey-24bckmtv8blu-819986.jpg?v=1737061512&width=400" 
+>>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
             alt="Urban Monkey Logo" 
             className="h-10"
           />
