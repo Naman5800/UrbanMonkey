@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import { FaHeart, FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -41,51 +40,42 @@ const TypewriterText = ({ text, className, delay = 0 }) => {
 
 const ProductCard = ({ product }) => {
   return (
-    <div className="relative bg-white shadow-md rounded-lg overflow-hidden transform transition hover:scale-105 w-full h-auto text-center">
-      {/* Wishlist & Cart Icons */}
-      <div className="absolute top-3 right-3 flex flex-col space-y-2">
-        <FaHeart className="text-gray-600 hover:text-red-500 cursor-pointer text-lg" />
-        <FaShoppingCart className="text-gray-600 hover:text-blue-600 cursor-pointer text-lg" />
+    <Link to={`/product/${product._id}`} className="block">
+      <div className="relative bg-white shadow-md rounded-lg overflow-hidden transform transition hover:scale-105 w-full h-auto text-center">
+        {/* Wishlist & Cart Icons */}
+        <div className="absolute top-3 right-3 flex flex-col space-y-2 z-10">
+          <div onClick={(e) => {
+            e.preventDefault();
+            // Add to wishlist functionality
+          }}>
+            <FaHeart className="text-gray-600 hover:text-red-500 cursor-pointer text-lg" />
+          </div>
+          <div onClick={(e) => {
+            e.preventDefault();
+            // Add to cart functionality
+          }}>
+            <FaShoppingCart className="text-gray-600 hover:text-blue-600 cursor-pointer text-lg" />
+          </div>
+        </div>
+
+        {/* Product Image */}
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-64 object-cover"
+        />
+
+        {/* Product Details */}
+        <div className="p-5">
+          <h3 className="font-bold text-l">{product.name}</h3>
+          <p className="text-gray-600">${product.price}</p>
+        </div>
       </div>
-
-      {/* Product Image */}
-      <img
-        src={product.image}
-        alt={product.name}
-        className="w-full h-64 object-cover"
-      />
-
-      {/* Product Details */}
-      <div className="p-5">
-        <h3 className="font-bold text-l">{product.name}</h3>
-        <p className="text-gray-600">${product.price}</p>
-=======
-import React, { useEffect, useState } from 'react';
-import Navbar from './Navbar';
-import axios from 'axios';
-
-const ProductCard = ({ product }) => {
-  return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105">
-      <img 
-        src={product.image} 
-        alt={product.name} 
-        className="w-full h-64 object-cover"
-      />
-      <div className="p-4">
-        <h3 className="font-bold text-xl">{product.name}</h3>
-        <p className="text-gray-600">${product.price}</p>
-        <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded">
-          Add to Cart
-        </button>
->>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
-      </div>
-    </div>
+    </Link>
   );
 };
 
 const ProductsPage = () => {
-<<<<<<< HEAD
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [priceRange, setPriceRange] = useState([0, 100]);
@@ -95,26 +85,12 @@ const ProductsPage = () => {
       try {
         const response = await axios.get("http://localhost:5000/api/products", {
           params: {
-=======
-  // Initialize products as an empty array to prevent errors
-  const [products, setProducts] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [priceRange, setPriceRange] = useState([0, 100]); // Default price range
-
-  useEffect(() => {
-    // Fetching products from MongoDB
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/products', {
-            params: {
->>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
             minPrice: priceRange[0],
             maxPrice: priceRange[1],
             query: searchQuery,
           },
         });
 
-<<<<<<< HEAD
         console.log("API Response:", response.data);
 
         if (Array.isArray(response.data)) {
@@ -126,21 +102,6 @@ const ProductsPage = () => {
       } catch (error) {
         console.error("Error fetching products:", error);
         setProducts([]);
-=======
-        // Log the API response for debugging
-        console.log('API Response:', response.data);
-
-        // Ensure the response data is an array before setting it
-        if (Array.isArray(response.data)) {
-          setProducts(response.data);
-        } else {
-          console.error('Invalid API response: Expected an array');
-          setProducts([]); // Set products to an empty array if the response is invalid
-        }
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setProducts([]); // Set products to an empty array on error
->>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
       }
     };
 
@@ -150,7 +111,6 @@ const ProductsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-<<<<<<< HEAD
 
       {/* Hero Section */}
       <section
@@ -199,35 +159,13 @@ const ProductsPage = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="border border-gray-300 rounded py-2 px-4 w-64"
           />
-=======
-      
-      <div className="container mx-auto px-4 py-12">
-        {/* Header Section */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">All Yours For The Taking</h1>
-          <div>
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="border border-gray-300 rounded py-2 px-4 w-64"
-            />
-          </div>
->>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
         </div>
 
         {/* Main Content */}
         <div className="flex">
-<<<<<<< HEAD
           {/* Filter Sidebar */}
           <aside className="w-1/5 pr-6">
             <h2 className="text-xl font-semibold mb-4">Filter by Price</h2>
-=======
-          {/* Filter Slider */}
-          <aside className="w-1/5 pr-6">
-            <h2 className="text-2xl font-semibold mb-4">Filter by Price</h2>
->>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
             <div className="bg-white p-4 shadow-md rounded">
               <input
                 type="range"
@@ -237,25 +175,15 @@ const ProductsPage = () => {
                 onChange={(e) => setPriceRange([0, Number(e.target.value)])}
                 className="w-full"
               />
-<<<<<<< HEAD
               <div className="flex justify-between text-gray-600 mt-2 text-sm">
-=======
-              <div className="flex justify-between text-gray-600 mt-2">
->>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
                 <span>${priceRange[0]}</span>
                 <span>${priceRange[1]}</span>
               </div>
             </div>
           </aside>
 
-<<<<<<< HEAD
           {/* Product Grid */}
           <div className="w-4/5 grid md:grid-cols-3 gap-6">
-=======
-          {/* Product Cards */}
-          <div className="w-4/5 grid md:grid-cols-3 gap-6">
-            {/* Ensure products is an array before calling map */}
->>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
             {Array.isArray(products) && products.length ? (
               products.map((product) => (
                 <ProductCard key={product.id} product={product} />
@@ -266,16 +194,9 @@ const ProductsPage = () => {
           </div>
         </div>
       </div>
-<<<<<<< HEAD
       <Footer />
-=======
->>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
     </div>
   );
 };
 
-<<<<<<< HEAD
 export default ProductsPage;
-=======
-export default ProductsPage;
->>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63

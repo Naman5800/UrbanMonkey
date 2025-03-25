@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const galleryRoutes = require('./routes/gallery');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
@@ -7,20 +8,20 @@ require('dotenv').config();
 // Initialize Express app
 const app = express();
 
+// Configure CORS
 const corsOptions = {
-    origin: 'http://localhost:5173', // Allow frontend access
+  origin: 'http://localhost:5173', // Allow frontend access
   methods: 'GET,POST,PUT,DELETE',
   allowedHeaders: 'Content-Type,Authorization',
 };
 
-app.use(cors(corsOptions));
-
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors(corsOptions)); // Apply CORS middleware with options
+app.use(bodyParser.json()); // Parse JSON request bodies
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
+mongoose
+  .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -38,6 +39,7 @@ app.get('/', (req, res) => {
 // Routes
 const productRoutes = require('./routes/products');
 app.use('/api/products', productRoutes);
+app.use('/api/gallery', galleryRoutes); // Mount gallery routes after CORS middleware
 
 // Error handling middleware
 app.use((err, req, res, next) => {

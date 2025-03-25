@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-<<<<<<< HEAD
-import logo from '../assets/logo.png'
-=======
->>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
+import { UserButton, SignInButton, useUser } from '@clerk/clerk-react'; // Import Clerk components
+import logo from '../assets/logo.png';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isSignedIn } = useUser(); // Check if the user is signed in
 
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-md">
@@ -14,11 +13,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex items-center">
           <img 
-<<<<<<< HEAD
             src={logo} 
-=======
-            src="https://www.urbanmonkey.com/cdn/shop/files/grind-mtv-x-urban-monkey-24bckmtv8blu-819986.jpg?v=1737061512&width=400" 
->>>>>>> c45e71a8de92bbb1ddf4273d3fdbac0975263c63
             alt="Urban Monkey Logo" 
             className="h-10"
           />
@@ -28,15 +23,17 @@ const Navbar = () => {
         <div className="hidden md:flex space-x-6 items-center">
           <Link to="/" className="hover:text-blue-600">Home</Link>
           <Link to="/products" className="hover:text-blue-600">Products</Link>
-          <Link to="/categories" className="hover:text-blue-600">Categories</Link>
           <Link to="/about" className="hover:text-blue-600">About</Link>
+          <Link to="/contact-us" className="hover:text-blue-600">Contact-Us</Link>
         </div>
 
         {/* User Actions */}
         <div className="hidden md:flex items-center space-x-4">
-          <Link to="/login" className="text-gray-800 hover:text-blue-600">
-            Profile
-          </Link>
+          {isSignedIn ? (
+            <UserButton afterSignOutUrl="/" /> // Show UserButton if signed in
+          ) : (
+            <SignInButton mode="modal" /> // Show SignInButton if not signed in
+          )}
           <Link to="/cart" className="text-gray-800 hover:text-blue-600">
             Cart
           </Link>
@@ -62,7 +59,11 @@ const Navbar = () => {
             <Link to="/categories" className="block py-2 hover:bg-gray-100">Categories</Link>
             <Link to="/about" className="block py-2 hover:bg-gray-100">About</Link>
             <div className="flex justify-between py-2">
-              <Link to="/login">Login</Link>
+              {isSignedIn ? (
+                <UserButton /> // Show UserButton if signed in
+              ) : (
+                <SignInButton mode="modal" /> // Show SignInButton if not signed in
+              )}
               <Link to="/cart">Cart</Link>
             </div>
           </div>
