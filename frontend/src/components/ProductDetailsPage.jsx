@@ -1,17 +1,43 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { FaHeart, FaShoppingCart, FaArrowLeft } from "react-icons/fa";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
+const Notification = ({ message, type, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 3000); // Notification disappears after 3 seconds
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 100 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 100 }}
+      transition={{ duration: 0.3 }}
+      className={`fixed top-20 right-4 p-4 rounded-lg shadow-lg z-50 ${
+        type === "success" ? "bg-green-500 text-white" : "bg-red-500 text-white"
+      }`}
+    >
+      {message}
+    </motion.div>
+  );
+};
+
 const ProductDetailsPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -27,6 +53,71 @@ const ProductDetailsPage = () => {
 
     fetchProductDetails();
   }, [id]);
+
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/products', {
+          params: { featured: true, limit: 3 }
+        });
+        setFeaturedProducts(response.data.filter(p => p._id !== id));
+      } catch (error) {
+        console.error("Error fetching featured products:", error);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, [id]);
+
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+  };
+
+  const handleAddToCart = () => {
+    const existingCart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+    const existingItemIndex = existingCart.findIndex(item => item.productId === product._id);
+    if (existingItemIndex > -1) {
+      existingCart[existingItemIndex].quantity += quantity;
+    } else {
+      existingCart.push({
+        productId: product._id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        quantity: quantity
+      });
+    }
+    sessionStorage.setItem('cart', JSON.stringify(existingCart));
+    showNotification("Product added to cart!");
+    console.log("Updated cart:", existingCart);
+  };
+
+  const handleBuyNow = () => {
+    navigate('/payment', { 
+      state: { 
+        product: product, 
+        quantity: quantity,
+        total: product.price * quantity 
+      }
+    });
+  };
+
+  const handleAddToWishlist = () => {
+    const existingWishlist = JSON.parse(sessionStorage.getItem('wishlist') || '[]');
+    if (!existingWishlist.some(item => item.productId === product._id)) {
+      existingWishlist.push({
+        productId: product._id,
+        name: product.name,
+        price: product.price,
+        image: product.image
+      });
+      sessionStorage.setItem('wishlist', JSON.stringify(existingWishlist));
+      showNotification("Added to wishlist!");
+    } else {
+      showNotification("Product already in wishlist!", "error");
+    }
+    console.log("Updated wishlist:", existingWishlist);
+  };
 
   if (loading) {
     return (
@@ -52,22 +143,16 @@ const ProductDetailsPage = () => {
     );
   }
 
-  // Mock data for thumbnail images - in a real app, this would come from your API
   const thumbnails = [
     product.image,
-    // You would have multiple images here in a real app
-    // For now we'll just repeat the same image
-    product.image,
-    product.image,
-    product.image
-  ];
+    ...(product.images || [])
+  ].filter(Boolean);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
 
       <div className="container mx-auto px-4 py-12">
-        {/* Back Button */}
         <Link
           to="/products"
           className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
@@ -77,17 +162,8 @@ const ProductDetailsPage = () => {
 
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="md:flex">
-            {/* Product Images Section */}
             <div className="md:w-1/2 p-6">
               <div className="relative">
-                {/* Featured Badge if applicable */}
-                {product.featured && (
-                  <div className="absolute top-4 left-4 bg-gray-800 text-white text-xs uppercase font-bold rounded-full px-3 py-1 z-10">
-                    Featured
-                  </div>
-                )}
-
-                {/* Main Image */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -101,7 +177,6 @@ const ProductDetailsPage = () => {
                   />
                 </motion.div>
 
-                {/* Thumbnail Images */}
                 <div className="mt-4 flex space-x-2">
                   {thumbnails.map((thumb, index) => (
                     <div
@@ -124,7 +199,6 @@ const ProductDetailsPage = () => {
               </div>
             </div>
 
-            {/* Product Info Section */}
             <div className="md:w-1/2 p-6 md:border-l border-gray-200">
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -135,35 +209,33 @@ const ProductDetailsPage = () => {
                   {product.name}
                 </h1>
                 <div className="text-2xl text-blue-600 font-semibold mb-4">
-                  ${product.price}
+                  ${product.price.toFixed(2)}
                   <span className="text-gray-500 text-sm ml-2">value</span>
                 </div>
 
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold mb-2">Description</h2>
                   <p className="text-gray-600">
-                    {product.description || "Behold the essence of digital artistry with this generic 3D character render crafted in Cinema 4D. The render presents a neutral character model posed in a standard T-pose, showcasing the basic form and anatomical structure. The model is finely detailed, exhibiting a balanced blend of realism and stylization, providing a blank canvas for further customization and animation."}
+                    {product.description || "No description available."}
                   </p>
                 </div>
 
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold mb-2">File Compatibility</h2>
-                  <div className="flex items-center">
-                    <span className="bg-blue-100 text-blue-800 py-1 px-2 rounded mr-2">
-                      {product.compatibility?.[0] || "Maya"}
-                    </span>
-                    {product.compatibility?.slice(1).map((compat, index) => (
-                      <span
-                        key={index}
-                        className="bg-blue-100 text-blue-800 py-1 px-2 rounded mr-2"
-                      >
-                        {compat}
-                      </span>
-                    ))}
+                {product.compatibility?.length > 0 && (
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold mb-2">File Compatibility</h2>
+                    <div className="flex items-center">
+                      {product.compatibility.map((compat, index) => (
+                        <span
+                          key={index}
+                          className="bg-blue-100 text-blue-800 py-1 px-2 rounded mr-2"
+                        >
+                          {compat}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
-                {/* Quantity Selector */}
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold mb-2">Quantity</h2>
                   <div className="flex items-center">
@@ -177,7 +249,7 @@ const ProductDetailsPage = () => {
                       type="number"
                       min="1"
                       value={quantity}
-                      onChange={(e) => setQuantity(Number(e.target.value))}
+                      onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
                       className="w-16 text-center border-t border-b border-gray-200 py-1"
                     />
                     <button
@@ -189,16 +261,17 @@ const ProductDetailsPage = () => {
                   </div>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex space-x-4">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={handleBuyNow}
                     className="flex-1 bg-black text-white py-3 px-6 rounded font-semibold hover:bg-gray-800 transition"
                   >
                     Buy Now
                   </motion.button>
                   <motion.button
+                    onClick={handleAddToWishlist}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="flex items-center justify-center bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded hover:bg-gray-50"
@@ -206,6 +279,7 @@ const ProductDetailsPage = () => {
                     <FaHeart className="text-gray-500 hover:text-red-500" />
                   </motion.button>
                   <motion.button
+                    onClick={handleAddToCart}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="flex items-center justify-center bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded hover:bg-gray-50"
@@ -218,51 +292,56 @@ const ProductDetailsPage = () => {
           </div>
         </div>
 
-        {/* Related Products Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-12"
         >
-          <h2 className="text-2xl font-bold mb-6">People also like...</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* This would be populated with actual related products in a real app */}
-            {Array(3)
-              .fill()
-              .map((_, index) => (
-                <div
-                  key={index}
+          <h2 className="text-2xl font-bold mb-6">Featured Products</h2>
+          {featuredProducts.length > 0 ? (
+            <div className="grid md:grid-cols-3 gap-6">
+              {featuredProducts.slice(0, 3).map((featuredProduct) => (
+                <Link
+                  to={`/product/${featuredProduct._id}`}
+                  key={featuredProduct._id}
                   className="bg-white shadow-md rounded-lg overflow-hidden transform transition hover:scale-105"
                 >
-                  <div className="relative">
-                    {index === 2 && (
-                      <div className="absolute top-4 left-4 bg-gray-800 text-white text-xs uppercase font-bold rounded-full px-3 py-1 z-10">
-                        Featured
-                      </div>
-                    )}
-                    <img
-                      src={`https://via.placeholder.com/400x300?text=Related+Product+${
-                        index + 1
-                      }`}
-                      alt={`Related Product ${index + 1}`}
-                      className="w-full h-64 object-cover"
-                    />
-                  </div>
+                  <img
+                    src={featuredProduct.image}
+                    alt={featuredProduct.name}
+                    className="w-full h-64 object-cover"
+                  />
                   <div className="p-4">
                     <div className="flex justify-between items-center">
-                      <h3 className="font-bold">Related Product {index + 1}</h3>
+                      <h3 className="font-bold">{featuredProduct.name}</h3>
                       <button className="text-gray-500 hover:text-red-500">
                         <FaHeart />
                       </button>
                     </div>
-                    <p className="text-gray-600 mt-1">${(50 + index * 10).toFixed(2)} value</p>
+                    <p className="text-gray-600 mt-1">
+                      ${featuredProduct.price.toFixed(2)} value
+                    </p>
                   </div>
-                </div>
+                </Link>
               ))}
-          </div>
+            </div>
+          ) : (
+            <p className="text-gray-600">No featured products available.</p>
+          )}
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {notification && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            onClose={() => setNotification(null)}
+          />
+        )}
+      </AnimatePresence>
+
       <Footer />
     </div>
   );

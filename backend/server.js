@@ -1,9 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const galleryRoutes = require('./routes/gallery');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
+
+// Import routes
+const productRoutes = require('./routes/products');
+const galleryRoutes = require('./routes/gallery');
+const userRoutes = require('./routes/users'); // Add this new import
 
 // Initialize Express app
 const app = express();
@@ -18,6 +22,12 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions)); // Apply CORS middleware with options
 app.use(bodyParser.json()); // Parse JSON request bodies
+
+// Add authorization middleware
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  next();
+});
 
 // Connect to MongoDB
 mongoose
@@ -37,9 +47,9 @@ app.get('/', (req, res) => {
 });
 
 // Routes
-const productRoutes = require('./routes/products');
 app.use('/api/products', productRoutes);
-app.use('/api/gallery', galleryRoutes); // Mount gallery routes after CORS middleware
+app.use('/api/gallery', galleryRoutes);
+app.use('/api/users', userRoutes); // Add the new user routes
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -53,7 +63,7 @@ app.use((req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
