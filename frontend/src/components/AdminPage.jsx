@@ -288,7 +288,7 @@ const AdminPage = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition disabled:opacity-50"
+                  className="flex-1 bg-black text-white px-6 py-3 rounded-md font-medium hover:bg-gray-800 transition disabled:opacity-50"
                 >
                   {isLoading ? "Saving..." : editingProductId ? "Update Product" : "Add Product"}
                 </button>

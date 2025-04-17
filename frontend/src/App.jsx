@@ -9,7 +9,7 @@ import ProductDetailsPage from "./components/ProductDetailsPage";
 import PaymentPage from "./components/PaymentPage";
 import CartPage from "./components/CartPage";
 import OrdersPage from "./components/OrdersPage";
-import AdminPage from "./components/AdminPage";
+import AdminPage from "./components/AdminPage.jsx";
 
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 

@@ -175,7 +175,7 @@ const HomePage = () => {
             </p>
             <Link
               to="/products"
-              className="inline-block mt-6 bg-blue-600 text-white px-6 py-3 font-semibold rounded-md hover:bg-blue-700 transition"
+              className="inline-block mt-6 bg-black text-white px-6 py-3 font-semibold rounded-md hover:bg-blue-700 transition"
             >
               Shop Caps →
             </Link>
@@ -278,7 +278,7 @@ const HomePage = () => {
             {
               name: "Pavan Patel",
               quote: "Urban Monkey caps are my go-to for any outfit. The quality is unreal!",
-              image: "https://encrypted-tbn0.gstatic.com/images?q=tbntqRVQeZ2p-uK_CGRzjqD0xT8V1D-uwXZ1GPYzI70Zugub7eaQYRqNg7oDrl2JyWM&usqp=CAU",
+              image: "data:image/jpeg;base64,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",
             },
             {
               name: "Sanjay Tundiya",
@@ -366,63 +366,6 @@ const HomePage = () => {
               </div>
             </motion.div>
           ))}
-        </div>
-      </motion.section>
-
-      {/* Get in Touch Section */}
-      <motion.section
-        ref={ctaRef}
-        className="py-16 px-6 text-center bg-gradient-to-r from-blue-600 to-blue-800 text-white"
-        variants={sectionVariants}
-        initial="hidden"
-        animate={isCtaInView ? "visible" : "hidden"}
-      >
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800"
-          animate={{
-            backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          style={{ backgroundSize: "200% 100%" }}
-        />
-        <div className="relative z-10 max-w-3xl mx-auto">
-          <motion.h2
-            className="text-3xl sm:text-4xl font-bold"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isCtaInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Get in Touch
-          </motion.h2>
-          <motion.p
-            className="mt-4 text-lg"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isCtaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            Join our community for exclusive drops, styling tips, and more. Follow us or drop us a line!
-          </motion.p>
-          <motion.div
-            className="mt-8 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isCtaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
-            <Link
-              to="/contact-us"
-              className="bg-white text-gray-900 px-6 py-3 font-semibold rounded-md hover:bg-gray-200 transition"
-            >
-              Contact Us
-            </Link>
-            <a
-              href="https://instagram.com/urbanmonkey"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-transparent border-2 border-white px-6 py-3 font-semibold rounded-md hover:bg-white hover:text-gray-900 transition"
-            >
-              Follow on Instagram
-            </a>
-          </motion.div>
         </div>
       </motion.section>
 
